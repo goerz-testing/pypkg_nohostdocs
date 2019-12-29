@@ -1,0 +1,37 @@
+# Config file for automatic testing at travis-ci.org
+dist: xenial
+language: python
+env:
+  global:
+matrix:
+  fast_finish: true
+  include:
+    - name: Check code style
+      python: 3.7
+      env: TOXENV="run-blackcheck,run-isortcheck"
+    - name: Docs
+      python: 3.7
+      env:
+        - DOCS="true"
+      addons:
+        apt_packages:
+    - name: Python 3.7
+      python: 3.7
+      env: TOXENV=py37-test
+
+install:
+  # any failure stops the build
+  - set -e
+  - pip install tox
+  - pip freeze
+  - printenv
+script:
+  # any failure stops testing immediately
+  - set -e
+  - |
+    if [[ "${DOCS}" == "true" ]]; then
+      tox -e docs
+    else
+      tox -e $TOXENV
+    fi
+  - echo "DONE"
